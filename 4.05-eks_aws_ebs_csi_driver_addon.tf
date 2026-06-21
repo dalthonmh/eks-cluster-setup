@@ -17,7 +17,11 @@ resource "aws_eks_addon" "ebs_csi_driver" { # Instala el add-on EBS CSI Driver e
     }
   })
 
-  depends_on = [aws_eks_cluster.eks_cluster]
+  depends_on = [
+    aws_eks_cluster.eks_cluster,
+    aws_iam_openid_connect_provider.eks_oidc,
+    aws_eks_addon.vpc_cni # Requiere red de pods funcional
+  ]
 
   timeouts {
     create = local.eks_addons_create_timeout

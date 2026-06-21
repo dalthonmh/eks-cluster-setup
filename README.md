@@ -43,49 +43,49 @@ O configurando las variables de entorno `AWS_ACCESS_KEY_ID` y `AWS_SECRET_ACCESS
 
 1. Clona este repositorio en tu máquina:
 
-    ```bash
-    git clone https://github.com/israoo/eks-cluster-setup.git
-    cd eks-cluster-setup
-    ```
+   ```bash
+   git clone https://github.com/israoo/eks-cluster-setup.git
+   cd eks-cluster-setup
+   ```
 
 2. Ajusta los valores de las variables en el archivo `variables.auto.tfvars` según tus necesidades.
 3. Inicializa Terraform:
 
-    ```bash
-    terraform init
-    ```
+   ```bash
+   terraform init
+   ```
 
 4. Crea el plan de ejecución:
 
-    ```bash
-    terraform plan -out=eks-cluster-setup.binary
-    ```
+   ```bash
+   terraform plan -out=eks-cluster-setup.binary
+   ```
 
 5. Aplica el plan de ejecución:
 
-    ```bash
-    terraform apply eks-cluster-setup.binary
-    ```
+   ```bash
+   terraform apply eks-cluster-setup.binary
+   ```
 
-    Este proceso puede tardar varios minutos en completarse. Una vez finalizado, se mostrarán las salidas de Terraform, incluyendo la URL de acceso al clúster de EKS.
+   Este proceso puede tardar varios minutos en completarse. Una vez finalizado, se mostrarán las salidas de Terraform, incluyendo la URL de acceso al clúster de EKS.
 
 6. Configura `kubectl` para que pueda acceder al clúster de EKS:
 
-    ```bash
-    aws eks update-kubeconfig --name $(terraform output -raw eks_cluster_name)
-    ```
+   ```bash
+   aws eks update-kubeconfig --name $(terraform output -raw eks_cluster_name)
+   ```
 
 7. Verifica que puedes acceder al clúster de EKS:
 
-    ```bash
-    kubectl get nodes
-    ```
+   ```bash
+   kubectl get nodes
+   ```
 
 8. Cuando termines de usar el clúster, puedes destruir todos los recursos creados con Terraform:
 
-    ```bash
-    terraform destroy
-    ```
+   ```bash
+   terraform destroy
+   ```
 
 ---
 
@@ -93,22 +93,22 @@ O configurando las variables de entorno `AWS_ACCESS_KEY_ID` y `AWS_SECRET_ACCESS
 
 1. Despliega una aplicación de prueba en el clúster de EKS:
 
-    ```bash
-    kubectl create deployment nginx --image=nginx
-    kubectl expose deployment nginx --port=80 --type=LoadBalancer
-    ```
+   ```bash
+   kubectl create deployment nginx --image=nginx
+   kubectl expose deployment nginx --port=80 --type=LoadBalancer
+   ```
 
 2. Verifica que el servicio se ha creado correctamente:
 
-    ```bash
-    kubectl get svc nginx
-    ```
+   ```bash
+   kubectl get svc nginx
+   ```
 
 3. Accede a la aplicación a través del `EXTERNAL-IP` del servicio:
 
-    ```bash
-    curl http://<EXTERNAL-IP>
-    ```
+   ```bash
+   curl http://<EXTERNAL-IP>
+   ```
 
 El servicio `nginx` tendrá un FQDN público en la propiedad `EXTERNAL-IP` que puedes usar para acceder a la aplicación. Este FQDN es asignado automáticamente por AWS a los servicios de tipo `LoadBalancer` que se crean en una subred pública, si quieres usar un dominio personalizado, puedes configurar un Alias en Route 53 apuntando a este DNS.
 

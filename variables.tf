@@ -1,6 +1,7 @@
 variable "aws_user" {
-  description = "AWS user name."
+  description = "Legacy: nombre de usuario IAM (ya no se usa directamente). El acceso al cluster ahora se otorga automáticamente al principal que ejecuta Terraform (data.aws_caller_identity)."
   type        = string
+  default     = ""
 }
 
 variable "eks" {

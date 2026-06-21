@@ -1,4 +1,4 @@
-resource "kubernetes_storage_class" "eks_ebs_sc" { # Crea una clase de almacenamiento para volúmenes EBS
+resource "kubernetes_storage_class_v1" "eks_ebs_sc" { # Crea una clase de almacenamiento para volúmenes EBS (usa v1 para evitar deprecación)
   metadata {
     name = var.eks.ebs_storage_class.name
     annotations = {
@@ -16,5 +16,14 @@ resource "kubernetes_storage_class" "eks_ebs_sc" { # Crea una clase de almacenam
   storage_provisioner = "ebs.csi.aws.com"                             # Proveedor de almacenamiento para volúmenes EBS
   volume_binding_mode = var.eks.ebs_storage_class.volume_binding_mode # Modo de enlace de volúmenes (por ejemplo, WaitForFirstConsumer, Immediate, etc.)
 
-  depends_on = [aws_eks_access_policy_association.admin_access_policy_association]
+  depends_on = [
+    aws_eks_addon.ebs_csi_driver,
+    aws_eks_access_policy_association.admin_access_policy_association
+  ]
+}
+
+# Migración desde el recurso deprecado para evitar destroy/create innecesario
+moved {
+  from = kubernetes_storage_class.eks_ebs_sc
+  to   = kubernetes_storage_class_v1.eks_ebs_sc
 }

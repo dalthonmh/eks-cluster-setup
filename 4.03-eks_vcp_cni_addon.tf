@@ -6,7 +6,11 @@ resource "aws_eks_addon" "vpc_cni" { # Instala el add-on VPC CNI en el cluster d
   resolve_conflicts_on_update = local.eks_addons_resolve_conflicts_on_update
   service_account_role_arn    = aws_iam_role.vpc_cni_role.arn # Asocia el rol de IAM del controlador de red de contenedores de EKS con el add-on (agrega un annotation al service account del controlador de red de contenedores)
 
-  depends_on = [aws_eks_cluster.eks_cluster]
+  depends_on = [
+    aws_eks_cluster.eks_cluster,
+    aws_iam_openid_connect_provider.eks_oidc
+    # Nota: quitamos dependencia de node_group para permitir más paralelismo y levantado más rápido
+  ]
 
   timeouts {
     create = local.eks_addons_create_timeout

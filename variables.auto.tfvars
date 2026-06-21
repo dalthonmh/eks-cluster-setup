@@ -2,24 +2,28 @@ aws_user = "cloud_user"
 
 eks = {
   addons = {
+    # IMPORTANTE: Las versiones de addons deben ser compatibles con tu cluster_version.
+    # Obtén las versiones correctas con estos comandos (cambia 1.36 si usas otra versión):
+    # aws eks describe-addon-versions --kubernetes-version 1.36 --addon-name <nombre> \
+    #   --query 'addons[0].addonVersions[?compatibilities[0].defaultVersion==`true`].addonVersion' --output text
     aws_ebs_csi_driver = {
-      version = "v1.39.0-eksbuild.1"
+      version = "v1.62.0-eksbuild.1"
     }
     coredns = {
-      version = "v1.11.4-eksbuild.2"
+      version = "v1.14.2-eksbuild.4"
     }
     eks_node_monitoring_agent = {
-      version = "v1.0.2-eksbuild.2"
+      version = "v1.6.6-eksbuild.1"
     }
     kube_proxy = {
-      version = "v1.32.0-eksbuild.2"
+      version = "v1.36.0-eksbuild.7"
     }
     vpc_cni = {
-      version = "v1.19.2-eksbuild.5"
+      version = "v1.21.2-eksbuild.2"
     }
   }
   cluster_name    = "eks-cluster"
-  cluster_version = "1.32"
+  cluster_version = "1.36"  # Asegúrate de que las versiones de addons coincidan con esta
   ebs_storage_class = {
     allow_volume_expansion = true
     name                   = "ebs-sc"
@@ -36,11 +40,11 @@ eks = {
     }
     instance_type              = "t3a.medium"
     max_pods_per_node          = 17
-    max_size                   = 3
+    max_size                   = 1 # Optimizado para levantado rápido: solo 1 nodo
     max_unavailable_percentage = 50
     min_size                   = 1
     node_group_name            = "eks-managed-node-group"
-    node_repair_enabled        = true
+    node_repair_enabled        = false # Deshabilitado para velocidad en prácticas
   }
 }
 

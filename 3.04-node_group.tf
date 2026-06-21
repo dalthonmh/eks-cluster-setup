@@ -2,19 +2,19 @@ resource "aws_eks_node_group" "eks_node_group" { # Crea un grupo de nodos admini
   cluster_name    = var.eks.cluster_name
   node_group_name = var.eks.worker_nodes.node_group_name
   node_role_arn   = aws_iam_role.eks_worker_node_iam_role.arn # Asocia el rol IAM de los worker nodes de EKS
-  subnet_ids = [                                              # Asocia las subredes privadas de la VPC con el grupo de nodos (para que los worker nodes se desplieguen en las subredes privadas)
+  capacity_type   = var.eks.worker_nodes.capacity_type        # ON_DEMAND o SPOT (mejor que solo etiqueta)
+  subnet_ids = [                                              # Usamos 2 AZs (mínimo requerido indirectamente por EKS)
     aws_subnet.private_subnet_1.id,
     aws_subnet.private_subnet_2.id,
-    aws_subnet.private_subnet_3.id,
   ]
 
-  scaling_config { # Configura el escalado automático de los worker nodes (para ajustar la cantidad de worker nodes según la demanda)
+  scaling_config {
     desired_size = var.eks.worker_nodes.min_size
     max_size     = var.eks.worker_nodes.max_size
     min_size     = var.eks.worker_nodes.min_size
   }
 
-  launch_template { # Asocia el launch template con el grupo de nodos (para definir la configuración de los worker nodes)
+  launch_template {
     id      = aws_launch_template.eks_worker_node_template.id
     version = aws_launch_template.eks_worker_node_template.latest_version
   }
@@ -40,7 +40,6 @@ resource "aws_eks_node_group" "eks_node_group" { # Crea un grupo de nodos admini
     aws_launch_template.eks_worker_node_template,
     aws_subnet.private_subnet_1,
     aws_subnet.private_subnet_2,
-    aws_subnet.private_subnet_3,
   ]
 
   lifecycle {
